@@ -16,8 +16,8 @@ from anyscale.sdk.anyscale_client.models.create_cluster_environment import (
 @ray.remote
 def launch_cluster(cluster_name):
     PROJECT_ID = "prj_bYLM4Aj5fuBDSSEqTYWQUvvx"
-    BUILD_ID = "bld_gExTeuVmPiqtbpWgj57hjx78"
-    CPT_ID = "cpt_y7SfehEkEd2fNWuYknaKifKy"
+    BUILD_ID = "bld_TEWZvMgGzk493mhVWdgS2rsF"
+    CPT_ID = "cpt_bLhHW48DcMLMPemCMdh9xjMQ"
 
     sdk = AnyscaleSDK(os.environ["ANYSCALE_CLI_TOKEN"])
     cluster_id = sdk.launch_cluster(
