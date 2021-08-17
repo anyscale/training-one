@@ -19,8 +19,7 @@ create_cluster_environment = CreateClusterEnvironment(
     config_json={'base_image': 'anyscale/ray:1.4.1-py37',
             'debian_packages': None,
             'env_vars': {},
-            'post_build_cmds': ['echo "Training Environment 1.5" > env',
-                                'cd /home/ray && echo `date` >> timestamp && git init && git remote add origin https://github.com/anyscale/training-one.git && git pull origin main',
+            'post_build_cmds': ['cd /home/ray && echo "1.0.1" >> version && git init && git remote add origin https://github.com/anyscale/training-one.git && git pull origin main',
                                 'cd /home/ray && make install',
                                 'git log | head -1 > git_commit.txt'],
             'python': {'conda_packages': None,
@@ -29,4 +28,6 @@ create_cluster_environment = CreateClusterEnvironment(
     )
 
 build = sdk.build_cluster_environment(create_cluster_environment)
+print(build)
 
+os.environ["BUILD_ID"]=build.result.id

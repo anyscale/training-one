@@ -1,4 +1,6 @@
 This project contains
+
+```
 .
 ├── Makefile - used in post-install command to generate notebooks
 ├── example_compute_config.json
@@ -12,5 +14,9 @@ This project contains
     ├── actors.py        - lesson on actors
     ├── scale.py         - lesson on autoscaler sdk
     └── tasks.py         - lesson on tasks
+```
+
+the Makefile can be used to generate notebooks from the python files in src.
+The environment build script r
 
 
