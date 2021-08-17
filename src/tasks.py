@@ -1,11 +1,16 @@
-##
+## Welcome to Ray Basics.  
+# Let's import and connect to ray:
+
+
+# Imports
 import ray
 import time
 ray.init(address="auto")
 
-##
+## Remote invocation
+# The fundamental pattern in Ray.
 
-# remote task
+# Here is a remote task.
 @ray.remote
 def my_remote_task():
     print("Starting a task")
@@ -13,9 +18,11 @@ def my_remote_task():
     print("Finishing a task")
     return "Finished a task"
 
+# Here is how to invoke it and retrieve its results
 ray.get(my_remote_task.remote())
 
-##
+# Remote invocation and blocking
+# Think of how to distribute remote invocation and blocking returns.
 
 obj_ref = my_remote_task.remote()
 
@@ -25,21 +32,19 @@ result = ray.get(obj_ref)
 
 print(f"The result: {result}")
 
-##
+## The most common error
+# Pay attention to types in your error messages.  
+# Sometimes you will find you have an object ref
+# instead of what you're looking for, which is the output of ray.get(obj_ref)
 
-# some erors
-
+# calling a remote function directly ERROR
 my_remote_task()
 
+# adding refs ERROR
 obj_ref + obj_ref
 
-# Pay attention to types in your error messages.  Sometimes you will have an object ref instead of what you want, which is the output of ray.get(obj_ref)
 
-
-## arguments
-
-
-## running a task a lot.
+## Repeating tasks
 
 def a_func(i):
     time.sleep(0.1)
@@ -100,8 +105,6 @@ for i in arguments:
 ## PATTERN Tree of tasks
 # https://docs.ray.io/en/master/ray-design-patterns/tree-of-tasks.html
 
-ray.client("anyscale://quicksort").connect()
-
 def partition(collection):
     # Use the last element as the first pivot
     pivot = collection.pop()
@@ -110,7 +113,7 @@ def partition(collection):
         if element > pivot:
             greater.append(element)
         else:
-            lesser.append(element)
+           lesser.append(element)
     return lesser, pivot, greater
 
 def quick_sort(collection):
@@ -122,7 +125,7 @@ def quick_sort(collection):
         greater = quick_sort(greater)
         return lesser + [pivot] + greater
 
-@ray.remote(num_cpus=1)
+@ray.remote(num_cpus=0.2)
 def quick_sort_distributed(collection):
     if len(collection) <= 200000:  # magic number
         return sorted(collection)
@@ -134,12 +137,13 @@ def quick_sort_distributed(collection):
 
 @ray.remote
 def driver():
+    BIG_LIST = 1_000_000
     from numpy import random
     import time
-    unsorted = random.randint(1000000, size=(40000000)).tolist()
-#    s = time.time()
-#    quick_sort(unsorted)
-#    print("Sequential execution: " + str(time.time() - s))
+    unsorted = random.randint(1000000, size=(BIG_LIST)).tolist()
+    s = time.time()
+    quick_sort(unsorted)
+    print("Sequential execution: " + str(time.time() - s))
     s = time.time()
     ray.get(quick_sort_distributed.remote(unsorted))
     print("Distributed execution: " + str(time.time() - s))
