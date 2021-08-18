@@ -1,4 +1,4 @@
-## Welcome to Ray Basics.  
+## Tasks
 # Let's import and connect to ray:
 
 
@@ -25,11 +25,9 @@ ray.get(my_remote_task.remote())
 # Think of how to distribute remote invocation and blocking returns.
 
 obj_ref = my_remote_task.remote()
-
 print(f"An object reference: {obj_ref}")
 
 result = ray.get(obj_ref)
-
 print(f"The result: {result}")
 
 ## The most common error
