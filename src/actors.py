@@ -1,10 +1,9 @@
-
+## Notebook Two Actors
 # Imports
 import ray
 import time
 ray.init(address="auto", namespace="actors")
 
-## Actors
 # Actors are remote objects with state and methods.  
 # Ray negotiates the relationship between actor references
 
