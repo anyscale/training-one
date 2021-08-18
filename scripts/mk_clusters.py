@@ -1,5 +1,6 @@
 import anyscale
 import os
+import sys
 import ray
 from anyscale.sdk.anyscale_client.sdk import AnyscaleSDK
 
@@ -16,8 +17,10 @@ from anyscale.sdk.anyscale_client.models.create_cluster_environment import (
 @ray.remote
 def launch_cluster(cluster_name):
     PROJECT_ID = "prj_BvJETqqBBBx4zXySjTL8EpRs"
-    #BUILD_ID = "bld_HFqVjryRwscaunmfJiBSJLbZ"
-    BUILD_ID = os.environ["BUILD_ID"]
+    if (sys.argv[1]):
+        BUILD_ID = sys.argv[1]
+    else:
+        BUILD_ID = "bld_9Xdcu9vRYYAwK8RBwbgCYnuD"
     CPT_ID = "cpt_bLhHW48DcMLMPemCMdh9xjMQ"
 
     sdk = AnyscaleSDK(os.environ["ANYSCALE_CLI_TOKEN"])
@@ -29,6 +32,7 @@ def launch_cluster(cluster_name):
             )
     return cluster_id
 
+print(sys.argv[1])
 cluster_refs = [launch_cluster.remote(cluster_name) for cluster_name in cluster_names]
 
 cluster_ids = ray.get(cluster_refs)

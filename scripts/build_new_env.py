@@ -30,7 +30,13 @@ create_cluster_environment = CreateClusterEnvironment(
             }
     )
 
-build = sdk.build_cluster_environment(create_cluster_environment)
-print(build)
 
-os.environ["BUILD_ID"]=build.id
+print("OK, building a new cluster environment")
+build = sdk.build_cluster_environment(create_cluster_environment)
+
+if (build.status == 'succeeded'):
+    print(f"Your build is ready {build.id}")
+    print(f"Make some clusters by running `python scripts/mk_clusters.py {build.id}`")
+else:
+    print("Something happened...")
+    print(build)
