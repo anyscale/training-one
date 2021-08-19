@@ -1,6 +1,8 @@
-install:
-	jupytext --from=py:light src/tasks.py -o RayAndAnyscaleBasics/tasks.ipynb
-	jupytext --from=py:light src/actors.py -o RayAndAnyscaleBasics/actors.ipynb
-	jupytext --from=py:light src/scale.py -o RayAndAnyscaleBasics/scale.ipynb
+SOURCES = tasks actors scale
+NOTEBOOKDIR := RayAndAnyscaleBasics
 
+CODE       = $(foreach sname, $(SOURCES), $(NOTEBOOKDIR)/$(sname).py)
+
+all:
+	jupytext --from=py:light --to ipynb $(CODE)
 

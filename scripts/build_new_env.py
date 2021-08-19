@@ -23,8 +23,7 @@ create_cluster_environment = CreateClusterEnvironment(
             'debian_packages': None,
             'env_vars': {},
             'post_build_cmds': [f'cd /home/ray && echo "{VERSION}" >> version && git init && git remote add origin https://github.com/anyscale/training-one.git && git pull origin main',
-                                'cd /home/ray && make install',
-                                'git log | head -1 > git_commit.txt'],
+                                'cd /home/ray && git log | head -1 > git_commit.txt'],
             'python': {'conda_packages': None,
                        'pip_packages': ["jupytext"]}
             }

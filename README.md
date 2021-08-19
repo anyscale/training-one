@@ -2,7 +2,7 @@ This project contains
 
 ```
 .
-├── Makefile - used in post-install command to generate notebooks
+├── Makefile - used generatesnotebooks
 ├── example_compute_config.json
 ├── notebooks - the Makefile dumps notebooks in here.
 ├── scripts
