@@ -6,7 +6,7 @@ from anyscale.sdk.anyscale_client.sdk import AnyscaleSDK
 
 ray.init(ignore_reinit_error=True)
 
-cluster_names = [f"class-one-{i}" for i in range(3)]
+cluster_names = [f"training-cluster-{i}" for i in range(3)]
 
 
 from anyscale import AnyscaleSDK
@@ -17,9 +17,12 @@ from anyscale.sdk.anyscale_client.models.create_cluster_environment import (
 @ray.remote
 def launch_cluster(cluster_name):
     PROJECT_ID = "prj_BvJETqqBBBx4zXySjTL8EpRs"
-    BUILD_ID = "bld_CcFbutvWMn9QQDCu2aRNYbws"
+    BUILD_ID = "bld_rjJyvMAxyfDQVaLAipM4RBVj"
     CPT_ID = "cpt_bLhHW48DcMLMPemCMdh9xjMQ"
 
+    if (sys.argv[1][0:3] == "bld"):
+        BUILD_ID = sys.argv[1]
+    print(f"Using build id {BUILD_ID}")
     sdk = AnyscaleSDK(os.environ["ANYSCALE_CLI_TOKEN"])
     cluster_id = sdk.launch_cluster(
             project_id=PROJECT_ID,

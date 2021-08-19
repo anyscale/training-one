@@ -19,7 +19,7 @@ APT_ID = "apt_WpyVHX5qi1tBQdLxu72d9Wrr"
 
 create_cluster_environment = CreateClusterEnvironment(
     name="training-environment",
-    config_json={'base_image': 'anyscale/ray:1.4.1-py37',
+    config_json={'base_image': 'anyscale/ray:1.5.2-py38',
             'debian_packages': None,
             'env_vars': {},
             'post_build_cmds': [f'cd /home/ray && echo "{VERSION}" >> version && git init && git remote add origin https://github.com/anyscale/training-one.git && git pull origin main',
