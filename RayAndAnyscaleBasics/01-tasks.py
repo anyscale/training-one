@@ -1,8 +1,8 @@
-## Tasks
+## 01-Tasks
+# Tasks are what we call remote functions running in a Ray cluster.
+# This notebook gives you the chance to work with and compose tasks
+
 # Let's import and connect to ray:
-
-
-# Imports
 import ray
 import time
 ray.init(address="auto")
@@ -21,14 +21,10 @@ def my_remote_task():
 # Here is how to invoke it and retrieve its results
 ray.get(my_remote_task.remote())
 
-# Remote invocation and blocking
-# Think of how to distribute remote invocation and blocking returns.
-
+# Distribute remote invocation and blocking returns.
 obj_ref = my_remote_task.remote()
 print(f"An object reference: {obj_ref}")
-
-result = ray.get(obj_ref)
-print(f"The result: {result}")
+ray.get(obj_ref)
 
 ## The most common error
 # Pay attention to types in your error messages.  
@@ -36,32 +32,39 @@ print(f"The result: {result}")
 # instead of what you're looking for, which is the output of ray.get(obj_ref)
 
 # calling a remote function directly ERROR
-my_remote_task()
+try:
+    my_remote_task()
+except TypeError as e:
+    print(e)
 
 # adding refs ERROR
-obj_ref + obj_ref
+try:
+    obj_ref + obj_ref
+except TypeError as e:
+    print(e)
 
 
 ## Repeating tasks
+# What makes a task special?  You can run as many in paralell as you have compute at your disposal:
 
 def a_func(i):
     time.sleep(0.1)
     return f"The square of {i} is {i*i}"
-
 # this is the same as annotating...
 remote_func = ray.remote(a_func)
 
-# this is slow
+# this is slow.  The calls all run one after another in a single thread.
 for i in range(100):
     print(a_func(i))
 
-# how about this:
+# What does this do?  Hint: It's an anti-pattern.
 for i in range(100):
     print(remote_func.remote(i))
-
 for i in range(100):
     print(ray.get(remote_func.remote(i)))
 
+# Some more things to try:
+# scale up the numbers above and see how ray distributes tasks
 
 ## BEST PRACTICE ONE -- delay ray.get()
 
@@ -86,7 +89,7 @@ def n_rands(n):
     import random
     return [random.uniform(0,1) for x in range(n)]
 
-arguments = range(10000)
+arguments = range(1000)
 BATCH_SIZE = 8
 result_refs = []
 for i in arguments:
@@ -115,7 +118,7 @@ def partition(collection):
     return lesser, pivot, greater
 
 def quick_sort(collection):
-    if len(collection) <= 200000:  # magic number
+    if len(collection) <= 20000:  # magic number
         return sorted(collection)
     else:
         lesser, pivot, greater = partition(collection)
@@ -123,9 +126,9 @@ def quick_sort(collection):
         greater = quick_sort(greater)
         return lesser + [pivot] + greater
 
-@ray.remote(num_cpus=0.2)
+@ray.remote(num_cpus=0.5)
 def quick_sort_distributed(collection):
-    if len(collection) <= 200000:  # magic number
+    if len(collection) <= 20000:  # magic number
         return sorted(collection)
     else:
         lesser, pivot, greater = partition(collection)
@@ -135,7 +138,7 @@ def quick_sort_distributed(collection):
 
 @ray.remote
 def driver():
-    BIG_LIST = 1_000_000
+    BIG_LIST = 200000
     from numpy import random
     import time
     unsorted = random.randint(1000000, size=(BIG_LIST)).tolist()

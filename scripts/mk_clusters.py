@@ -16,12 +16,15 @@ from anyscale.sdk.anyscale_client.models.create_cluster_environment import (
 
 @ray.remote
 def launch_cluster(cluster_name):
+    # set this to your RayAndAnyscaleBasics project
     PROJECT_ID = "prj_BvJETqqBBBx4zXySjTL8EpRs"
-    BUILD_ID = "bld_rjJyvMAxyfDQVaLAipM4RBVj"
+    # set this to the ID of your training-suitbale cluster compute
     CPT_ID = "cpt_bLhHW48DcMLMPemCMdh9xjMQ"
+    # read this buildid from a file
+    BUILD_ID = ""
+    with open("build_id.txt") as f:
+        BUILD_ID = f.read().strip()
 
-    if (sys.argv[1][0:3] == "bld"):
-        BUILD_ID = sys.argv[1]
     print(f"Using build id {BUILD_ID}")
     sdk = AnyscaleSDK(os.environ["ANYSCALE_CLI_TOKEN"])
     cluster_id = sdk.launch_cluster(

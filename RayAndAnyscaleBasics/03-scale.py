@@ -6,16 +6,15 @@ import ray
 import time
 ray.init(address="auto", namespace="scaling")
 
-# This example pre-provisions a cluster.  Autoscaling is a slow-reacting
+## Provisioning
+#This example pre-provisions a cluster.  Autoscaling is a slow-reacting
 # process.  If you need a lot of machines fast, this technique helped
-import ray.autoscaler.sdk
 
+import ray.autoscaler.sdk
 INIT_CPUS=50
 tot_cpus = ray.cluster_resources()["CPU"]
-
 if tot_cpus < INIT_CPUS:
     ray.autoscaler.sdk.request_resources(num_cpus=INIT_CPUS)
-
     # this kind of loop was required when CPU count was in the 1000s
     while tot_cpus < INIT_CPUS:
         print(f"Total CPUs so far: {tot_cpus}")
