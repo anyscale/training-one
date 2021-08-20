@@ -35,6 +35,8 @@ build = sdk.build_cluster_environment(create_cluster_environment)
 
 if (build.status == 'succeeded'):
     print(f"Your build is ready {build.id}")
+    with open("build_id.txt", "w") as f:
+        f.write(build.id)
 else:
     print("Something happened...")
     print(build)

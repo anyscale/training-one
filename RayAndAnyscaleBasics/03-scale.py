@@ -4,7 +4,51 @@
 
 import ray
 import time
+import math
+import random
 ray.init(address="auto", namespace="scaling")
+
+## Monte Carlo
+# This simulation is useful because it gives you an opportunity to see how to scale 
+# loads
+
+@ray.remote
+def random_batchs(sample_size):
+
+    total_in = 0
+    for i in range(batch_size):
+        x,y = random.uniform(-1,1), random.uniform(-1,1)
+        if (math.hypot(x,y) <= 1):
+            total_in += 1
+    return total_in
+
+@ray.remote
+class PiApproximator():
+    def __init__(self):
+        self.approximations = []
+    def approximate(self, num_samples, batch_size):
+        start = time.time()
+        num_inside = 0
+        for i in range(0, num_samples, batch_size):
+            num_inside += ray.get(random_samples.remote(batch_size))
+        pi = ((4 * num_inside) / num_samples )
+        end = time.time()
+        self.approximations.append({ "time":end - start,
+            "num_samples":num_samples,
+            "batch_size":batch_size,
+            "pi":pi})
+        return pi
+    def get_approximations(self):
+        return self.approximations
+
+ray.kill(ray.get_actor("approximator"))
+approximator = PiApproximator.options(name="approximator").remote()
+ray.get(approximator.approximate.remote(100, 1))
+ray.get(approximator.approximate.remote(1000, 1))
+ray.get(approximator.approximate.remote(1000, 10))
+ray.get(approximator.approximate.remote(1000, 100))
+ray.get(approximator.get_approximations.remote())
+
 
 ## Provisioning
 #This example pre-provisions a cluster.  Autoscaling is a slow-reacting
