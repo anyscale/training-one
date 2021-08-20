@@ -6,6 +6,7 @@ import ray
 import time
 import math
 import random
+import pandas as pd
 ray.init(address="auto", namespace="scaling")
 
 ## Monte Carlo
@@ -13,7 +14,7 @@ ray.init(address="auto", namespace="scaling")
 # loads
 
 @ray.remote
-def random_batchs(sample_size):
+def random_batch(batch_size):
 
     total_in = 0
     for i in range(batch_size):
@@ -28,10 +29,10 @@ class PiApproximator():
         self.approximations = []
     def approximate(self, num_samples, batch_size):
         start = time.time()
-        num_inside = 0
+        num_inside = []
         for i in range(0, num_samples, batch_size):
-            num_inside += ray.get(random_samples.remote(batch_size))
-        pi = ((4 * num_inside) / num_samples )
+            num_inside.append(random_batch.remote(batch_size))
+        pi = (4 * sum(ray.get(num_inside)) / num_samples )
         end = time.time()
         self.approximations.append({ "time":end - start,
             "num_samples":num_samples,
@@ -39,9 +40,9 @@ class PiApproximator():
             "pi":pi})
         return pi
     def get_approximations(self):
-        return self.approximations
+        return pd.DataFrame(self.approximations)
 
-ray.kill(ray.get_actor("approximator"))
+#ray.kill(ray.get_actor("approximator"))
 approximator = PiApproximator.options(name="approximator").remote()
 ray.get(approximator.approximate.remote(100, 1))
 ray.get(approximator.approximate.remote(1000, 1))
