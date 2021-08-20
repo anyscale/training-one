@@ -14,8 +14,10 @@ from anyscale.sdk.anyscale_client.models.create_cluster_environment import (
 
 sdk = AnyscaleSDK(os.environ["ANYSCALE_CLI_TOKEN"])
 PROJECT_NAME="RayAndAnyscaleBasics"
-PROJECT_ID = "prj_BvJETqqBBBx4zXySjTL8EpRs"
-APT_ID = "apt_WpyVHX5qi1tBQdLxu72d9Wrr"
+# This project is in the Customer Organization
+PROJECT_ID = "prj_rwzCbneuBN9Ys5k9PDj4KbHY"
+# Created by hand in the Customer environment
+APT_ID = "apt_u67hgnSqWNujfLV3pvJBAiTz"
 
 create_cluster_environment = CreateClusterEnvironment(
     name="training-environment",
@@ -25,7 +27,7 @@ create_cluster_environment = CreateClusterEnvironment(
             'post_build_cmds': [f'cd /home/ray && echo "{VERSION}" >> version && git init && git remote add origin https://github.com/anyscale/training-one.git && git pull origin main',
                                 'cd /home/ray && git log | head -1 > git_commit.txt'],
             'python': {'conda_packages': None,
-                       'pip_packages': ["jupytext"]}
+                       'pip_packages': ["jupytext", "matplotlib"]}
             }
     )
 
