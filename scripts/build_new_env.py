@@ -42,7 +42,7 @@ if (build.status == 'succeeded'):
     print(f"Your build is ready {build.id}")
     with open(ENV_FILE, "a") as f:
         f.write(f"# updating BUILD_ID on {date.today()}\n")
-        f.write(build.id)
+        f.write(f"export BUILD_ID={build.id}\n")
 else:
     print("Something happened...")
     print(build)

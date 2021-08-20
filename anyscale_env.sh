@@ -5,3 +5,5 @@ export ENV_FILE=anyscale_env.sh
 export HOW_MANY_CLUSTERS=20
 
 
+# updating BUILD_ID on 2021-08-20
+export BUILD_ID=bld_XJUPgBpaUZTWu2xiTMEzBGeM

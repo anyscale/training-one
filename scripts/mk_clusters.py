@@ -9,7 +9,7 @@ ray.init(ignore_reinit_error=True)
 # set to how many clusters to launch
 HOW_MANY_CLUSTERS = os.environ["HOW_MANY_CLUSTERS"]
 
-cluster_names = [f"training-cluster-{i}" for i in range(HOW_MANY_CLUSTERS)]
+cluster_names = [f"training-cluster-{i}" for i in range(int(HOW_MANY_CLUSTERS))]
 
 
 from anyscale import AnyscaleSDK
@@ -17,7 +17,8 @@ from anyscale.sdk.anyscale_client.models.create_cluster_environment import (
     CreateClusterEnvironment,
    )
 
-@ray.remote
+# By using num_cpus < 0.1 I start up to 10x number of CPUs available
+@ray.remote(num_cpus=0.1)
 def launch_cluster(cluster_name):
     # set this to your RayAndAnyscaleBasics project
     PROJECT_ID = os.environ["PROJECT_ID"]
@@ -25,8 +26,6 @@ def launch_cluster(cluster_name):
     CPT_ID = os.environ["CPT_ID"]
     # read this buildid from environment
     BUILD_ID = os.environ["BUILD_ID"]
-    with open("build_id.txt") as f:
-        BUILD_ID = f.read().strip()
 
     print(f"Using build id {BUILD_ID}")
     sdk = AnyscaleSDK(os.environ["ANYSCALE_CLI_TOKEN"])
