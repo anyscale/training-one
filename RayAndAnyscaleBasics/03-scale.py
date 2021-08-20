@@ -50,13 +50,20 @@ ray.get(approximator.approximate.remote(1000, 10))
 ray.get(approximator.approximate.remote(1000, 100))
 ray.get(approximator.get_approximations.remote())
 
+for x in range(5):
+    ray.get([approximator.approximate.remote(i*100000,10000) for i in range(1,20)])
+df = ray.get(approximator.get_approximations.remote())
+df.plot("num_samples","pi", kind="scatter")
+df.plot("num_samples", "time")
+
+
 
 ## Provisioning
 #This example pre-provisions a cluster.  Autoscaling is a slow-reacting
 # process.  If you need a lot of machines fast, this technique helped
 
 import ray.autoscaler.sdk
-INIT_CPUS=50
+INIT_CPUS=40
 tot_cpus = ray.cluster_resources()["CPU"]
 if tot_cpus < INIT_CPUS:
     ray.autoscaler.sdk.request_resources(num_cpus=INIT_CPUS)
@@ -67,6 +74,26 @@ if tot_cpus < INIT_CPUS:
         time.sleep(15)
         tot_cpus = ray.cluster_resources()["CPU"]
 
-# When you're ready, scale that cluster back down again.
+## When you're ready, scale that cluster back down again.
 ray.autoscaler.sdk.request_resources(num_cpus=8)
+
+## Tuning
+# I really don't know what this code will do exactly, but we can work with it and see.
+
+from ray import tune
+
+def trainable(config):
+    approximation = ray.get(
+            approximator.approximate.remote(
+                config["num_samples"],
+                config["batch_size"])
+            )
+    score = approximation["pi"]
+    tune.report(mean_loss = score)
+
+config = {
+        "num_samples" : tune.grid_search([x for x in range(10000,100000,10000)]),
+        "batch_size" : tune.grid_search([10,100,1000,10000])
+        }
+tune.run(trainable, config=config)
 

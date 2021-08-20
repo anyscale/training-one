@@ -7,7 +7,7 @@ from anyscale.sdk.anyscale_client.sdk import AnyscaleSDK
 ray.init(ignore_reinit_error=True)
 
 # set to how many clusters to launch
-HOW_MANY_CLUSTERS = 1
+HOW_MANY_CLUSTERS = os.environ["HOW_MANY_CLUSTERS"]
 
 cluster_names = [f"training-cluster-{i}" for i in range(HOW_MANY_CLUSTERS)]
 
@@ -20,11 +20,11 @@ from anyscale.sdk.anyscale_client.models.create_cluster_environment import (
 @ray.remote
 def launch_cluster(cluster_name):
     # set this to your RayAndAnyscaleBasics project
-    PROJECT_ID = "prj_rwzCbneuBN9Ys5k9PDj4KbHY"
+    PROJECT_ID = os.environ["PROJECT_ID"]
     # set this to the ID of your training-suitbale cluster compute
-    CPT_ID = "cpt_cqcaqMEBg9nyTenwdTsaUXJn"
-    # read this buildid from a file
-    BUILD_ID = ""
+    CPT_ID = os.environ["CPT_ID"]
+    # read this buildid from environment
+    BUILD_ID = os.environ["BUILD_ID"]
     with open("build_id.txt") as f:
         BUILD_ID = f.read().strip()
 

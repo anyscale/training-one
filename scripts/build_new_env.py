@@ -2,6 +2,7 @@ import anyscale
 import os
 import ray
 import time
+from datetime import date
 
 VERSION=f"0.0.1-{time.time()}"
 
@@ -15,9 +16,11 @@ from anyscale.sdk.anyscale_client.models.create_cluster_environment import (
 sdk = AnyscaleSDK(os.environ["ANYSCALE_CLI_TOKEN"])
 PROJECT_NAME="RayAndAnyscaleBasics"
 # This project is in the Customer Organization
-PROJECT_ID = "prj_rwzCbneuBN9Ys5k9PDj4KbHY"
+PROJECT_ID = os.environ["PROJECT_ID"]
 # Created by hand in the Customer environment
-APT_ID = "apt_u67hgnSqWNujfLV3pvJBAiTz"
+APT_ID = os.environ["APT_ID"]
+# ENV file stores build id
+ENV_FILE = os.environ["ENV_FILE"]
 
 create_cluster_environment = CreateClusterEnvironment(
     name="training-environment",
@@ -37,7 +40,8 @@ build = sdk.build_cluster_environment(create_cluster_environment)
 
 if (build.status == 'succeeded'):
     print(f"Your build is ready {build.id}")
-    with open("build_id.txt", "w") as f:
+    with open(ENV_FILE, "a") as f:
+        f.write(f"# updating BUILD_ID on {date.today()}\n")
         f.write(build.id)
 else:
     print("Something happened...")
