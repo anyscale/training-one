@@ -66,10 +66,47 @@ f3 = Friend.remote("Molecule")
 meet.remote(f1,f2)
 meet.remote(f1,f3)
 
+
 # let's see if everyone is hooked up
 labels = [ray.get(x.display.remote()) for x in [f1, f2, f3]]
 labels
         
+
+## Actors can interact
+# Pass object references between actor methods.  Actors know to operate
+# on the remote object
+
+@ray.remote
+class Rock:
+    def __init__(self):
+        self.location = 0
+    def move(self):
+        self.location += 1
+    def locate(self):
+        return f"{self.location} feet from home."
+
+@ray.remote
+class RockPusher:
+    def push_the_rock(self, rock):
+        rock.move.remote()
+        ray.get(rock.locate.remote())  # force evaluation
+
+rock = Rock.remote()
+pusherA = RockPusher.remote()
+pusherB = RockPusher.remote()
+
+pusherA.push_the_rock.remote(rock)
+pusherA.push_the_rock.remote(rock)
+pusherB.push_the_rock.remote(rock)
+pusherA.push_the_rock.remote(rock)
+pusherA.push_the_rock.remote(rock)
+
+#time.sleep(1)
+ray.get(rock.locate.remote())
+        
+
+
+
 ## Naming Actors
 @ray.remote
 class Shouter():
