@@ -36,12 +36,14 @@ try:
     my_remote_task()
 except TypeError as e:
     print(e)
+#my_remote_task()
 
 # adding refs ERROR
 try:
     obj_ref + obj_ref
 except TypeError as e:
     print(e)
+# obj_ref+obj_ref
 
 
 ## Repeating tasks
@@ -57,9 +59,11 @@ remote_func = ray.remote(a_func)
 for i in range(100):
     print(a_func(i))
 
-# What does this do?  Hint: It's an anti-pattern.
+# what will this do?
 for i in range(100):
     print(remote_func.remote(i))
+
+# Is this a good pattern?  (HINT: no.)
 for i in range(100):
     print(ray.get(remote_func.remote(i)))
 

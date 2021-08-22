@@ -38,6 +38,13 @@ c.work.remote()
 c.work.remote()
 c.work.remote()
 
+# As with tasks, there are certain things you cannot do with Actors:
+
+# x = Counter()
+
+# x = Counter.remote()
+# x.work()
+
 ## Instantiating
 
 @ray.remote
@@ -66,6 +73,8 @@ f3 = Friend.remote("Molecule")
 meet.remote(f1,f2)
 meet.remote(f1,f3)
 
+# Let's take a look at the values
+ray.get(f1.getName.remote())
 
 # let's see if everyone is hooked up
 labels = [ray.get(x.display.remote()) for x in [f1, f2, f3]]
@@ -176,6 +185,7 @@ def wait_and_go(signal):
     ray.get(signal.wait.remote())
 
     print("go!")
+    return "I went."
 
 signal = SignalActor.remote()
 tasks = [wait_and_go.remote(signal) for _ in range(4)]

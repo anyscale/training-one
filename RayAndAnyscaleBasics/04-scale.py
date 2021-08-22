@@ -7,7 +7,7 @@ import time
 import math
 import random
 import pandas as pd
-ray.init(address="auto", namespace="scaling")
+ray.init(address="auto", namespace="scaling", runtime_env={"pip":"requirements.txt"})
 
 ## Monte Carlo
 # This simulation is useful because it gives you an opportunity to see how to scale 
@@ -50,8 +50,9 @@ ray.get(approximator.approximate.remote(1000, 10))
 ray.get(approximator.approximate.remote(1000, 100))
 ray.get(approximator.get_approximations.remote())
 
-for x in range(5):
-    ray.get([approximator.approximate.remote(i*100000,10000) for i in range(1,20)])
+# use these numbers to start talking about efficiency
+#for x in range(5):
+    #ray.get([approximator.approximate.remote(i*100000,10000) for i in range(1,20)])
 df = ray.get(approximator.get_approximations.remote())
 df.plot("num_samples","pi", kind="scatter")
 df.plot("num_samples", "time")
@@ -77,23 +78,60 @@ if tot_cpus < INIT_CPUS:
 ## When you're ready, scale that cluster back down again.
 ray.autoscaler.sdk.request_resources(num_cpus=8)
 
-## Tuning
-# I really don't know what this code will do exactly, but we can work with it and see.
 
-from ray import tune
+## Ray Serve
+# Ray serve is a library for scaffolding highly parallel endpoints.
+# Since it's integrated with the Ray framework, it's suitable for creating
+# self-contained APIs for model inference.
 
-def trainable(config):
-    approximation = ray.get(
-            approximator.approximate.remote(
-                config["num_samples"],
-                config["batch_size"])
-            )
-    score = approximation["pi"]
-    tune.report(mean_loss = score)
+import ray
+from ray import serve
+from io import BytesIO
+from PIL import Image
+import requests
+from fastapi import FastAPI, Request
+BACKEND = "resnet18:v0"
+app = FastAPI()
 
-config = {
-        "num_samples" : tune.grid_search([x for x in range(10000,100000,10000)]),
-        "batch_size" : tune.grid_search([10,100,1000,10000])
-        }
-tune.run(trainable, config=config)
+@serve.deployment(name="predictor", route_prefix="/")
+@serve.ingress(app)
+class ImageModel:
+    def __init__(self):
+        self.model = resnet18(pretrained=True).eval()
+        self.preprocessor = transforms.Compose([
+            transforms.Resize(224),
+            transforms.CenterCrop(224),
+            transforms.ToTensor(),
+            transforms.Lambda(lambda t: t[:3, ...]),  # remove alpha channel
+            transforms.Normalize(
+                mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
+        ])
+
+    @app.post("/image_predict")
+    async def predict(self, request : Request):
+        image_payload_bytes = await request.body()
+        pil_image = Image.open(BytesIO(image_payload_bytes))
+        print("[1/3] Parsed image data: {}".format(pil_image))
+
+        pil_images = [pil_image]  # Our current batch size is one
+        input_tensor = torch.cat(
+            [self.preprocessor(i).unsqueeze(0) for i in pil_images])
+        print("[2/3] Images transformed, tensor shape {}".format(
+            input_tensor.shape))
+
+        with torch.no_grad():
+            output_tensor = self.model(input_tensor)
+        print("[3/3] Inference done!")
+        return {"class_index": int(torch.argmax(output_tensor[0]))}
+
+
+## Start Serve and use it
+
+serve.start(detached=True)
+
+#set up actor with 1 replicas
+ImageModel.options(num_replicas=1)
+# change the above line to '10' and see RPS go up
+ImageModel.deploy()
+    
 

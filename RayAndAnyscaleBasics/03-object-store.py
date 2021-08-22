@@ -11,7 +11,6 @@ import pandas as pd
 
 # This example loads a csv into the object store
 s3 = boto3.client('s3')
-
 bucket="anyscale-data"
 key="imagenet/imagenet_2012_bounding_boxes.csv"
 obj = s3.get_object(Bucket=bucket, Key=key)
@@ -24,36 +23,43 @@ df_ref
 
 # You can get the object just like the result of a remote invocation
 df2 = ray.get(df_ref)
+df2
 
-##
+
+## Data Wrapping
 # Use objects for shared state that is expensive to load.
 
-
-# pass a ref into a constructor - no copy reference
+# 
 @ray.remote
-class AFactory:
+class DataWrapper:
+    def __init__(self):
+        import boto3
+        s3 = boto3.client('s3')
+        bucket="anyscale-data"
+        key="imagenet/imagenet_2012_bounding_boxes.csv"
+        obj = s3.get_object(Bucket=bucket, Key=key)
+        df = pd.read_csv(obj['Body'], names=["filename","minx","maxx","miny","maxy"])
+        self.bounding_boxes = ray.put(df)
+
+    def get_bb(self):
+        return self.bounding_boxes
+
+@ray.remote
+class DataConsumer:
     def __init__(self, bb_ref):
         self.bounding_boxes = bb_ref
 
     def areas(self):
-        print(self.bounding_boxes)
-        df = self.bounding_boxes
-        return abs((df['maxx'] - df['minx']) * (df['maxy'] - df['miny']))
-
-@ray.remote
-class BFactory:
-    def __init__(self, bb_ref):
-        self.bounding_boxes = bb_ref[0]
-
-    def areas(self):
-        print(self.bounding_boxes)
         df = ray.get(self.bounding_boxes)
         return abs((df['maxx'] - df['minx']) * (df['maxy'] - df['miny']))
 
 
-a = AFactory.remote(df_ref)
-areas = ray.get(a.areas.remote())
+# Make a singleton remote object to hold the data
+a = DataWrapper.remote()
+bb_ref = a.get_bb.remote()
 
-b = BFactory.remote([df_ref])
-areas = ray.get(a.areas.remote())
+# Pass it as argument to constructor
+b = DataConsumer.remote(bb_ref)
+areas = ray.get(b.areas.remote())
+areas
 
