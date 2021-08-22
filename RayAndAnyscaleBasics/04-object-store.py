@@ -4,10 +4,18 @@
 # directly to hold named datasets.
 
 import ray
-from ray import datasets
+import boto3
+import pandas as pd
+
+# A Key/Value store
 
 # This example loads a csv into the object store
-with open("data.csv") a f:
+s3 = boto3.client('s3')
+
+bucket="anyscale-data"
+key="nyc-taxi-train.csv"
+obj = s3.get_object(Bucket=bucket, Key=key)
+obj_ref = ray.put(obj['Body'].read())
 
 
 
