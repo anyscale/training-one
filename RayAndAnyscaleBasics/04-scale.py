@@ -85,44 +85,23 @@ ray.autoscaler.sdk.request_resources(num_cpus=8)
 # self-contained APIs for model inference.
 
 import ray
+import time
 from ray import serve
-from io import BytesIO
-from PIL import Image
 import requests
 from fastapi import FastAPI, Request
-BACKEND = "resnet18:v0"
 app = FastAPI()
 
-@serve.deployment(name="predictor", route_prefix="/")
+@serve.deployment(name="service", route_prefix="/")
 @serve.ingress(app)
 class ImageModel:
     def __init__(self):
-        self.model = resnet18(pretrained=True).eval()
-        self.preprocessor = transforms.Compose([
-            transforms.Resize(224),
-            transforms.CenterCrop(224),
-            transforms.ToTensor(),
-            transforms.Lambda(lambda t: t[:3, ...]),  # remove alpha channel
-            transforms.Normalize(
-                mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
-        ])
+        pass
 
-    @app.post("/image_predict")
+    @app.get("/image_predict")
     async def predict(self, request : Request):
-        image_payload_bytes = await request.body()
-        pil_image = Image.open(BytesIO(image_payload_bytes))
-        print("[1/3] Parsed image data: {}".format(pil_image))
-
-        pil_images = [pil_image]  # Our current batch size is one
-        input_tensor = torch.cat(
-            [self.preprocessor(i).unsqueeze(0) for i in pil_images])
-        print("[2/3] Images transformed, tensor shape {}".format(
-            input_tensor.shape))
-
-        with torch.no_grad():
-            output_tensor = self.model(input_tensor)
-        print("[3/3] Inference done!")
-        return {"class_index": int(torch.argmax(output_tensor[0]))}
+        print("I got an API call!  I'm going to slow things down.")
+        time.sleep(0.2)
+        return {"class_index": 123}
 
 
 ## Start Serve and use it
@@ -134,4 +113,29 @@ ImageModel.options(num_replicas=1)
 # change the above line to '10' and see RPS go up
 ImageModel.deploy()
     
+
+## Requests
+
+response = requests.get("http://localhost:8000/image_predict")
+response
+
+response.text
+
+# We can of course also use Ray to scale requests.
+
+@ray.remote
+def do_get():
+    response = requests.get("http://localhost:8000/image_predict")
+    return response.text
+
+# submit 10 requests at once
+start = time.time()
+ray.get([do_get.remote() for _ in range(10)])
+end = time.time()
+print(end - start)
+
+# Now we'll go back and experiment with the replicas
+ImageModel.options(num_replicas=3)
+# change the above line to '10' and see RPS go up
+ImageModel.deploy()
 
