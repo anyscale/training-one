@@ -6,9 +6,6 @@ from anyscale.sdk.anyscale_client.sdk import AnyscaleSDK
 
 ray.init(ignore_reinit_error=True)
 
-# set to how many clusters to launch
-HOW_MANY_CLUSTERS = os.environ["HOW_MANY_CLUSTERS"]
-
 students = os.environ["STUDENTS"].split(",")
 cluster_names = [f"training-cluster-{i}" for i in students]
 
