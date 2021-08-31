@@ -22,7 +22,8 @@ APT_ID = os.environ["APT_ID"]
 # ENV file stores build id
 ENV_FILE = os.environ["ENV_FILE"]
 
-BRANCH = "ml"
+#BRANCH = "ml"
+BRANCH = "main"
 
 create_cluster_environment = CreateClusterEnvironment(
     name="training-environment",
