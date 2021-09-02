@@ -14,17 +14,12 @@ from anyscale.sdk.anyscale_client.models.create_cluster_environment import (
 
 
 sdk = AnyscaleSDK(os.environ["ANYSCALE_CLI_TOKEN"])
-PROJECT_NAME="RayAndAnyscaleBasics"
-# This project is in the Customer Organization
-PROJECT_ID = os.environ["PROJECT_ID"]
-# Created by hand in the Customer environment
-APT_ID = os.environ["APT_ID"]
 # ENV file stores build id
 ENV_FILE = os.environ["ENV_FILE"]
 
 create_cluster_environment = CreateClusterEnvironment(
     name="training-environment",
-    config_json={'base_image': 'anyscale/ray:1.5.2-py37',
+    config_json={'base_image': 'anyscale/ray-ml:1.6.0-py38',
             'debian_packages': None,
             'env_vars': {},
             'post_build_cmds': [f'cd /home/ray && echo "{VERSION}" >> version && git init && git remote add origin https://github.com/anyscale/training-one.git && git pull origin main',

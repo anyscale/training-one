@@ -1,5 +1,5 @@
 SOURCES = 01-tasks 02-actors 03-object-store 04-scale 
-NOTEBOOKDIR := RayAndAnyscaleBasics
+NOTEBOOKDIR := TrainingNotebooks/RayAndAnyscaleBasics
 
 CODE       = $(foreach sname, $(SOURCES), $(NOTEBOOKDIR)/$(sname).py)
 
