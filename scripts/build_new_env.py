@@ -28,7 +28,7 @@ create_cluster_environment = CreateClusterEnvironment(
             'post_build_cmds': [f'cd /home/ray && echo "{VERSION}" >> version && git init && git remote add origin https://github.com/anyscale/training-one.git && git pull origin {BRANCH}',
                                 'cd /home/ray && git log | head -1 > git_commit.txt'],
             'python': {'conda_packages': None,
-                       'pip_packages': ["jupytext", "matplotlib"]}
+                       'pip_packages': ["seaborn","jupytext", "matplotlib"]}
             }
     )
 
