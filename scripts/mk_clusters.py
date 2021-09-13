@@ -32,7 +32,7 @@ def launch_cluster(cluster_name):
             cluster_name=cluster_name,
             cluster_environment_build_id=BUILD_ID,
             cluster_compute_id=CPT_ID,
-            idle_timeout_minutes=10
+            idle_timeout_minutes=120
             )
     return cluster_id
 
