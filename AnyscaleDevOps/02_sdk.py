@@ -72,10 +72,6 @@ build = ray.get(build_ref)
 
 # You may want to start clusters from the SDK.  This method provides control of configuration from the ops layer, while letting the client simply know the cluster name in order to use it ?
 
-sdk.launch(cluster)
-
-
-
 ## Jobs
 
 
