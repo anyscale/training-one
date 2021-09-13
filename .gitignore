@@ -2,3 +2,4 @@
 example_compute_config.json
 .anyscale.yaml
 *.ipynb_checkpoints
+__pycache__
