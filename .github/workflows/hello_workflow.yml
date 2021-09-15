@@ -32,4 +32,5 @@ jobs:
       - name: Run a multi-line script
         run: |
           echo Demonstrating a simple CI Hook
-          pytest tests/units.py
+          cd AnyscaleDevOps && python -m pytest tests/units.py
+          cd AnyscaleDevOps && python -m pytest tests/anyscale_distributed.py
