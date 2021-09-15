@@ -3,7 +3,7 @@
 name: DemoCI
 
 env:
-  ANYSCALE_CLI_TOKEN: ${{ env.ANYSCALE_CLI_TOKEN }}
+  ANYSCALE_CLI_TOKEN: ${{ secrets.CWG_ANYSCALE_TOKEN }}
 
 # Controls when the workflow will run
 on:
@@ -22,10 +22,6 @@ jobs:
   test_all:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
-
-    # There is an environment on this repo called "demo_ci" 
-    # that contains a secret variable for credentials
-    environment: "demo_ci"
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
