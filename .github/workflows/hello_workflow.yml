@@ -33,5 +33,7 @@ jobs:
         run: |
           echo Demonstrating a simple CI Hook
           pip install pytest
+          pip install ray[default]
+          pip install anyscale
           cd AnyscaleDevOps && python -m pytest tests/units.py
           cd AnyscaleDevOps && python -m pytest tests/anyscale_distributed.py
