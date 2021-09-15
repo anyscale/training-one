@@ -1,6 +1,9 @@
 # This is a basic workflow to help you get started with Actions
 
-name: CI
+name: DemoCI
+
+env:
+  ANYSCALE_CLI_TOKEN: ${{ env.ANYSCALE_CLI_TOKEN }}
 
 # Controls when the workflow will run
 on:
@@ -24,8 +27,6 @@ jobs:
     # that contains a secret variable for credentials
     environment: "demo_ci"
 
-    env:
-      ANYSCALE_CLI_TOKEN: ${{ env.ANYSCALE_CLI_TOKEN }}
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
