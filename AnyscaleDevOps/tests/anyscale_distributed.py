@@ -4,7 +4,7 @@ import ray
 
 def test_remote():
     print("Running test on remote cluster")
-    ray.init("anyscale://test-cluster", cluster_env="my-dd-env")
+    ray.init("anyscale://test-cluster", cluster_env="my-dd-env", project_dir=".")
     assert ray.get(remote_one.remote(22)) == 23
 
 
