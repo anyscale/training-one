@@ -45,4 +45,5 @@ if __name__ == "__main__":
 
 ## Go look at dashboards
 # 
-requests.get("https://session-7wmfe6bjx8bvrqhy2clfzg5v.i.anyscaleuserdata.com/serve/get_something", headers={'anyscale-token': '7e7e8227-02c1-4b23-9015-d7ca530014ae'}).text
+URL = "https://session-7wmfe6bjx8bvrqhy2clfzg5v.i.anyscaleuserdata.com"
+resp = requests.get(f"{URL}/serve/get_something", cookies={'anyscale-token': '7e7e8227-02c1-4b23-9015-d7ca530014ae'}).text
