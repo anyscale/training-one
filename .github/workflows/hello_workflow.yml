@@ -40,4 +40,5 @@ jobs:
           pip install anyscale
           cd AnyscaleDevOps
           python -m pytest tests/units.py
+          python -m pytest tests/local_distributed.py
           python -m pytest tests/anyscale_distributed.py

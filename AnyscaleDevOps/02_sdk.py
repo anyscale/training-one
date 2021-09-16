@@ -18,11 +18,12 @@ from anyscale.sdk.anyscale_client.models.create_cluster_environment import (
 ## Initialize the SDK.
 sdk = AnyscaleSDK(os.environ["ANYSCALE_CLI_TOKEN"])
 
-##
-
+## This key is for the DataDog API
 DD_API_KEY=os.environ["DD_API_KEY"]
 
-# This is an advanced use of create_cluster_environment
+# This create_cluster_environment
+# * gets requirements from a file
+# * includes installation for DataDog agent
 import pkutils
 requirements = list(pkutils.parse_requirements('requirements.txt'))
 
@@ -60,17 +61,26 @@ build = ray.get(build_ref)
 
 # You may want to start clusters from the SDK.  This method provides control of configuration from the ops layer, while letting the client simply know the cluster name in order to use it ?
 
-CPT_ID
+CPT_ID="cpt_bLhHW48DcMLMPemCMdh9xjMQ"
+PROJECT_ID="prj_7rgb4YJrXvyCSmwyHYuVLBJm"
 
 cluster_id = sdk.launch_cluster(
         project_id=PROJECT_ID,
-        cluster_name=cluster_name,
-        cluster_environment_build_id=build,
+        cluster_name="my_dd_cluster",
+        cluster_environment_build_id=build.id,
         cluster_compute_id=CPT_ID,
-        idle_timeout_minutes=120
+        idle_timeout_minutes=10
         )
 return cluster_id
 
 ## Jobs
 
+from anyscale.sdk.anyscale_client.models.jobs_query import (
+    JobsQuery,
+    )
+jobs = sdk.search_jobs(JobsQuery(project_id=PROJECT_ID))
+jobs.results[0:1]
+
+##
+sdk.get_job("job_BCPRSYAbGbfLEykQqFMgSfxz")
 
