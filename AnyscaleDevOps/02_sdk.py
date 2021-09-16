@@ -73,6 +73,12 @@ cluster_id = sdk.launch_cluster(
         )
 return cluster_id
 
+## Project Search
+from anyscale.sdk.anyscale_client.models.projects_query import (
+    ProjectsQuery,
+    )
+projects = sdk.search_projects(ProjectsQuery(name="AnyscaleDevOps"))
+
 ## Jobs
 
 from anyscale.sdk.anyscale_client.models.jobs_query import (
