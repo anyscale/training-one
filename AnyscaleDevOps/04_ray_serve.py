@@ -37,13 +37,11 @@ if __name__ == "__main__":
     ray.init("anyscale://ci-test-cluster", cluster_env="my-dd-env", cluster_compute="training-compute-1", project_dir=".", namespace="ns")
     serve.start(detached=True)
 
-    #set up actor with 3 replicas
-    DemoModel.options(num_replicas=3)
-    # change the above line to '10' and see RPS go up
-    DemoModel.deploy()
+    # change the below line to '10' and see RPS go up
+    DemoModel.options(num_replicas=3).deploy()
     
 
 ## Go look at dashboards
 # 
-URL = "https://session-7wmfe6bjx8bvrqhy2clfzg5v.i.anyscaleuserdata.com"
-resp = requests.get(f"{URL}/serve/get_something", cookies={'anyscale-token': '7e7e8227-02c1-4b23-9015-d7ca530014ae'}).text
+#URL = "https://session-7wmfe6bjx8bvrqhy2clfzg5v.i.anyscaleuserdata.com"
+#resp = requests.get(f"{URL}/serve/get_something", cookies={'anyscale-token': '7e7e8227-02c1-4b23-9015-d7ca530014ae'}).text
