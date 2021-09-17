@@ -2,6 +2,7 @@ This folder contains exercises and examples for devops topics around anyscale
 
 Here are the contents
 
+```text
 .
 ├── 01_cli_commands.sh
 ├── 02_sdk.py
@@ -17,13 +18,5 @@ Here are the contents
     ├── anyscale_distributed.py
     ├── local_distributed.py
     └── units.py
+```
 
-4 directories, 16 files
-
-#TODO
-How to connect to Anyscale DataDog
-A ray serve overview (04)
-poetry 
-
-
-her is a change
