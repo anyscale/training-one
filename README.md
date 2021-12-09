@@ -1,17 +1,49 @@
-This project contains
+This project contains training materials -- take 1
+
+The three slide decks are snapshots of a particular set of sessions
+from August-September 2021
 
 ```text
 .
-├── Makefile - `make` generates notebooks from python files
-├── RayAndAnyscaleBasics - the Makefile dumps notebooks in here.
-    ├── 01-tasks.py         - lesson on tasks
-    ├── 02-actors.py        - lesson on actors
-    ├── 03-object-store.py  - lesson on put and get
-    ├── 04-scale.py         - lesson on autoscaler sdk
-    └── requirements.txt    - not used yet
-├── scripts
-    ├── build_new_env.py - make a new cluster environment
-    └── mk_clusters.py   - use a build id to spin up several clusters
+├── Makefile
+├── README.md
+├── TrainingNotebooks
+│   ├── DevOps
+│   ├── RayAndAnyscaleBasics
+│   │   ├── 01-tasks.ipynb
+│   │   ├── 01-tasks.py
+│   │   ├── 02-actors.ipynb
+│   │   ├── 02-actors.py
+│   │   ├── 03-object-store.ipynb
+│   │   ├── 03-object-store.py
+│   │   ├── 04-scale.ipynb
+│   │   ├── 04-scale.py
+│   │   └── README.md
+│   └── RaySGDandTune
+│       ├── RaySGD.ipynb
+│       └── RayTune.ipynb
+├── requirements.txt
+├── AnyscaleDevOps
+│   ├── 01_cli_commands.sh
+│   ├── 02_sdk.py
+│   ├── 03_lifecycle.sh
+│   ├── 04_ray_serve.py
+│   ├── README.md
+│   ├── app
+│   │   ├── __init__.py
+│   │   └── computation.py
+│   ├── requirements.txt
+│   └── tests
+│       ├── __init__.py
+│       ├── anyscale_distributed.py
+│       ├── local_distributed.py
+│       ├── locustfile.py
+│       └── units.py
+└── scripts
+    ├── build_new_env.py
+    ├── mk_clusters.py
+    ├── scratch.py
+    └── test_driver.py
 ```
 
 The environment:
